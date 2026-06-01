@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abraham Romero Torres — M.Ed. E-Portfolio</title>
+<style>
+  :root {
+    --navy: #0C2340;
+    --orange: #FFA300;
+    --cream: #f8f7f5;
+    --gray: #555;
+    --light-gray: #e8e6e1;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--cream);
+    color: #222;
+    line-height: 1.7;
+  }
+  /* Hamburger - hidden on desktop */
+  .hamburger {
+    display: none; position: fixed; top: 12px; left: 12px; z-index: 200;
+    background: var(--navy); color: #fff; border: none;
+    width: 44px; height: 44px; border-radius: 8px;
+    font-size: 1.5rem; cursor: pointer;
+    align-items: center; justify-content: center;
+  }
+  .hamburger:hover { background: #1a3a5c; }
+  /* Overlay for mobile */
+  .sidebar-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+    z-index: 90;
+  }
+  .sidebar-overlay.open { display: block; }
+  /* Sidebar */
+  .sidebar {
+    position: fixed; top: 0; left: 0; bottom: 0; width: 260px;
+    background: var(--navy); color: #fff;
+    padding: 2rem 1.5rem; overflow-y: auto; z-index: 100;
+    transition: transform 0.3s ease;
+  }
+  .sidebar h2 {
+    font-size: 1.1rem; font-weight: 600; margin-bottom: 0.25rem;
+    color: var(--orange);
+  }
+  .sidebar .subtitle {
+    font-size: 0.8rem; color: rgba(255,255,255,0.7);
+    margin-bottom: 1.5rem; line-height: 1.4;
+  }
+  .sidebar nav a {
+    display: block; padding: 0.5rem 0.75rem; margin-bottom: 0.15rem;
+    color: rgba(255,255,255,0.8); text-decoration: none;
+    border-radius: 6px; font-size: 0.9rem; transition: all 0.2s;
+  }
+  .sidebar nav a:hover, .sidebar nav a.active {
+    background: rgba(255,163,0,0.15); color: var(--orange);
+  }
+  .sidebar .section-label {
+    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;
+    color: rgba(255,255,255,0.4); margin: 1rem 0 0.25rem 0.5rem;
+  }
+  .main { margin-left: 260px; min-height: 100vh; padding: 3rem 4rem; max-width: 900px; }
+  .page { display: none; }
+  .page.active { display: block; }
+  /* Artifact flex grid */
+  .artifact-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+  .artifact-grid .artifact-box {
+    flex: 1 1 320px;
+    min-width: 280px;
+    max-width: 100%;
+    margin: 0;
+  }
+  h1 {
+    font-size: 2rem; color: var(--navy); margin-bottom: 0.5rem;
+    border-bottom: 3px solid var(--orange); padding-bottom: 0.5rem;
+  }
+  h2 {
+    font-size: 1.3rem; color: var(--navy); margin: 1.5rem 0 0.75rem;
+  }
+  h3 {
+    font-size: 1.1rem; color: #333; margin: 1.25rem 0 0.5rem;
+  }
+  p { margin-bottom: 1rem; }
+  ul, ol { margin-bottom: 1rem; padding-left: 1.5rem; }
+  li { margin-bottom: 0.3rem; }
+  .meta { color: var(--gray); font-size: 0.9rem; margin-bottom: 1.5rem; }
+  .artifact-box {
+    background: #fff; border: 1px solid var(--light-gray); border-radius: 8px;
+    padding: 1.5rem; margin: 1.5rem 0;
+    border-left: 4px solid var(--orange);
+  }
+  .artifact-box h3 { margin-top: 0; color: var(--navy); }
+  .artifact-box .note { font-size: 0.85rem; color: var(--gray); margin-top: 0.5rem; }
+  .artifact-thumb { width: 100%; max-width: 220px; border: 1px solid var(--light-gray); border-radius: 6px; margin-bottom: 0.75rem; display: block; }
+  .artifact-thumb:hover { border-color: var(--accent); opacity: 0.9; }
+  .btn {
+    display: inline-block; padding: 0.6rem 1.2rem; border-radius: 6px;
+    text-decoration: none; font-weight: 500; font-size: 0.9rem;
+    background: var(--navy); color: #fff; transition: 0.2s;
+  }
+  .btn:hover { background: #1a3a5c; }
+  .btn-sm {
+    display: inline-block;
+    padding: 0.35rem 0.8rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.8rem;
+    background: transparent;
+    color: var(--navy);
+    border: 1px solid var(--navy);
+    transition: 0.2s;
+    margin-top: 0.5rem;
+  }
+  .btn-sm:hover { background: var(--navy); color: #fff; }
+
+  .btn-orange { background: var(--orange); color: var(--navy); }
+  .btn-orange:hover { background: #e89200; }
+  .standard-objective {
+    background: rgba(12,35,64,0.05); padding: 1rem 1.5rem;
+    border-radius: 8px; margin: 1rem 0;
+    font-style: italic; color: var(--navy);
+  }
+  .ref-list { list-style: none; padding: 0; }
+  .ref-list li {
+    font-size: 0.85rem; color: var(--gray);
+    padding: 0.3rem 0; border-bottom: 1px solid var(--light-gray);
+  }
+  .letter-block {
+    background: #fff; border-radius: 8px; padding: 2rem;
+    margin: 1rem 0; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .letter-block p { margin-bottom: 1.2rem; }
+  .letter-block .salutation { font-size: 1.1rem; margin-bottom: 1.5rem; }
+  .letter-block .closing { margin-top: 1.5rem; }
+  /* Responsive: tablet landscape */
+  @media (max-width: 1024px) {
+    .main { padding: 2rem; }
+    .artifact-grid .artifact-box { flex: 1 1 280px; min-width: 240px; }
+  }
+  /* Responsive: mobile */
+  @media (max-width: 768px) {
+    .hamburger { display: flex; }
+    .sidebar {
+      transform: translateX(-100%); width: 280px;
+    }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; padding: 4.5rem 1rem 1.5rem; }
+    h1 { font-size: 1.5rem; }
+    .artifact-grid .artifact-box { flex: 1 1 100%; min-width: 0; }
+    .sidebar-photo img { max-width: 100px; max-height: 100px; }
+  }
+</style>
+</head>
+<body>
+
+<button class="hamburger" id="menu-btn" aria-label="Toggle menu">☰</button>
+<div class="sidebar-overlay" id="menu-overlay"></div>
+
+<div class="sidebar">
+  <div class="sidebar-photo">
+    <img src="/photo.jpg" alt="Abraham Romero Torres" style="width:120px;height:120px;border-radius:50%;object-fit:cover;border:3px solid var(--accent);margin-bottom:0.75rem;">
+  </div>
+  <h2>Abraham Romero Torres</h2>
+  <div class="subtitle">M.Ed. in Curriculum &amp; Instruction<br>UTRGV &#8226; Expected June 2026</div>
+  <nav>
+    <a href="#" class="active" data-page="home">Home</a>
+    <a href="#" data-page="reflection">Reflection</a>
+    <div class="section-label">Standards</div>
+    <a href="#" data-page="s1">1 — EDCI 7334</a>
+    <a href="#" data-page="s2">2 — EDCI 7334 / EDFR 6302</a>
+    <a href="#" data-page="s3">3 — EDCI 7353</a>
+    <a href="#" data-page="s4">4 — EDFR 6302</a>
+    <a href="#" data-page="s5">5 — EDFR 6300</a>
+    <a href="#" data-page="s6">6 — EDCI 6304</a>
+    <a href="#" data-page="s7">7 — EDFR 6388</a>
+    <a href="#" data-page="s8">8 — Any</a>
+  </nav>
+</div>
+
+<div class="main">
+
+  <!-- HOME PAGE -->
+  <div id="home" class="page active">
+    <h1>Home</h1>
+    <p class="meta">Last updated: May 31, 2026</p>
+
+    <p>Welcome to my e-portfolio. I am Abraham Romero Torres, a 7th grade mathematics teacher at Vanguard Academy Beethoven Secondary in Edinburg, Texas, and a candidate for the Master of Education in Curriculum &amp; Instruction at the University of Texas Rio Grande Valley.</p>
+
+    <p>My professional goal is to strengthen curriculum implementation at the campus and district level, particularly in mathematics HQIM adoption, instructional coaching, and data-driven improvement cycles serving historically underserved communities.</p>
+
+    <p>This portfolio documents my growth across eight program standards. Each standard page includes a reflective rationale and selected artifacts demonstrating my knowledge and skills.</p>
+
+    <p>I recommend reviewing the standards in numerical order, followed by the Reflection page. The site is best viewed in a modern web browser with PDF viewing capability. No additional plugins are required.</p>
+
+    <p><strong>Contact:</strong> abraham.romero01@utrgv.edu</p>
+    <p><strong>Date of last update:</strong> May 31, 2026</p>
+  </div>
+
+  <!-- REFLECTION PAGE -->
+  <div id="reflection" class="page">
+    <h1>Reflection</h1>
+    <p class="meta">A reflection letter addressed to the Curriculum &amp; Instruction Faculty</p>
+    <div class="letter-block">
+      <p class="salutation">Dear Faculty of the Curriculum &amp; Instruction Program,</p>
+      <p><strong>Before the Program.</strong> When I began the Master of Education in Curriculum &amp; Instruction at UTRGV, I was in my third year of teaching 8th grade mathematics at Carlos F. Truan Jr. High School in Elsa, Texas. I had recently taken on the roles of PLC Lead and Department Head, and our campus was in the early stages of implementing High-Quality Instructional Materials (HQIM) in partnership with Instruction Partners. At that time, I understood curriculum largely as the materials I was handed and instruction as what I did in front of the classroom. I knew something was missing—our students continued to struggle on STAAR mathematics assessments despite the adoption of research-backed materials—but I lacked the theoretical framework to diagnose why. I entered this program seeking answers to questions I could barely articulate: Why do some curriculum implementations succeed while others stall? What does it truly mean to teach well? And how can assessment become something we do <em>with</em> students rather than <em>to</em> them?</p>
+      <p><strong>Throughout the Program.</strong> The first course that reshaped my thinking was EDCI 7334 (Curriculum Problems and Processes). Studying the four languages of Curricular-Pedagogical Praxis gave me a vocabulary to analyze curriculum decisions that I had been making intuitively. My Design Challenge 2 white paper, "Flipping the Classroom: A Pathway to High-Quality Curriculum Implementation," represents the synthesis of this learning. In it, I analyzed STAAR data from 2013–2024 at my campus, identified the gap between curriculum adoption and implementation fidelity, and proposed the flipped classroom model as a theory-driven intervention.</p>
+      <p>EDCI 6304 (Assessment of Learning) fundamentally changed how I think about the relationship between assessment and instruction. My Balanced Assessment System project required me to design a coherent system integrating formative assessment for learning, metacognitive assessment as learning, and authentic summative assessment of learning. Collecting qualitative student data through exit tickets and checklists, and quantitative data through rubric-scored performance tasks, taught me that effective assessment is not a single event but a continuous cycle of gathering evidence, interpreting it, and adjusting instruction.</p>
+      <p>EDFR 6302 (Foundations of Learning, Cognition and Human Development) deepened my understanding of the student as a whole person shaped by cognitive, social, and environmental factors. Learning about behavioral theory, social cognitive theory, and the role of self-efficacy gave me a more nuanced approach to classroom management and student motivation. My module assignment analyzing student learning influences—examining how factors such as socioeconomic background, cultural identity, and prior academic experiences shape readiness to learn—has made me a more empathetic and responsive educator.</p>
+      <p>EDFR 6300 (Research Methods in Education) equipped me with the tools to engage critically with educational research and to design my own inquiries. Distinguishing between quantitative and qualitative methodologies, evaluating sampling and validity, and formulating researchable questions have become essential in my daily practice as an evidence-informed educator.</p>
+      <p>My specialization courses—EDCI 7353 (Algebraic Concepts) and EDCI 7354 (Geometric Concepts)—built my pedagogical content knowledge in mathematics. The NCTM Standards essay required me to articulate how the six Principles for School Mathematics apply specifically to algebra instruction, while the Algebra Interview Comparative Report gave me direct experience analyzing how students construct mathematical understanding through clinical interviews.</p>
+      <p>EDFR 6388 (Historical and Sociocultural Foundations of Education) situated my classroom practice within broader social and historical contexts. Understanding the historical forces that have shaped educational inequality reinforced my commitment to equity-oriented teaching and culturally sustaining pedagogy.</p>
+      <p><strong>Lessons Learned.</strong> If I could give advice to myself at the start of this program, it would be this: teaching is not the delivery of content; it is the design of conditions for learning. Every course in this program converged on the same insight—that the most powerful educators are those who think systematically about curriculum, instruction, assessment, and the whole student, and who use evidence to continuously refine their practice.</p>
+      <p>I have also learned that meaningful professional growth requires vulnerability. The most valuable learning in this program came not from the times I felt confident but from the moments I was willing to examine my assumptions, acknowledge gaps in my knowledge, and reimagine my practice.</p>
+      <p><strong>Future Goals and Vision.</strong> Looking ahead, I aim to transition from the classroom into curriculum leadership at the campus or district level. My immediate goal is to continue developing as an instructional coach who supports teachers in implementing HQIM with fidelity while adapting instruction to meet the needs of diverse learners. In the longer term, I aspire to contribute to curriculum policy and design at the regional or state level, using the analytical and research skills developed in this program to advocate for equitable mathematics education.</p>
+      <p>I am particularly committed to exploring how emerging technologies—including artificial intelligence—can be designed and implemented equitably to support rigorous mathematics learning for students from historically underserved communities.</p>
+      <p>Thank you for the guidance, knowledge, and challenge you have provided throughout this program.</p>
+      <p class="closing">Sincerely,<br>Abraham Romero Torres</p>
+    </div>
+  </div>
+
+  <!-- STANDARD 1 — Curriculum (EDCI 7334) -->
+  <div id="s1" class="page">
+    <h1>Standard 1 — EDCI 7334</h1>
+    <h2>Knowledge of Curriculum</h2>
+    <div class="standard-objective">Program completers will demonstrate advanced ability to design, implement, and evaluate curriculum that promotes student learning.</div>
+    <h3>Rationale</h3>
+    <p>Throughout EDCI 7334 (Curriculum Problems and Processes), I developed a comprehensive understanding of curriculum as both a theoretical construct and a practical endeavor. The course introduced me to the four languages of Curricular-Pedagogical Praxis—Intellectual Traditionalist, Positivist, Interpretivist-Experiential, and Critical Praxeologist—which provided a framework for understanding how curriculum decisions reflect competing philosophical orientations about the purposes of education. This perspective transformed my understanding of curriculum from a fixed set of materials to a dynamic, contested space shaped by values, history, and power.</p>
+    <p>The artifacts below demonstrate my growth in curriculum knowledge across multiple design challenges and reflections completed in this course.</p>
+
+<div class="artifact-grid">
+<div class="artifact-box">
+      <h3>Design Challenge 2 White Paper</h3>
+      <p><strong>Course:</strong> EDCI 7334 — Curriculum Problems and Processes</p>
+      <p><strong>Description:</strong> Research-based white paper proposing the flipped classroom model as a pathway to improve HQIM implementation and student mathematics outcomes, including STAAR data analysis and implementation framework.</p>
+            <a href="/artifacts/design-challenge-2.pdf?v=2" target="_blank">
+        <img src="/artifacts/preview-design-challenge-2.png?v=2" alt="Preview" class="artifact-thumb">
+      </a>
+
+      <div class="artifact-links" style="margin-bottom:0.3rem;">
+
+      <a class="btn" href="/artifacts/design-challenge-2.pdf?v=2" target="_blank">Open Artifact</a></div>
+</div>
+    <div class="artifact-box">
+      <h3>Week 1 Reflection: Historical CPP Languages</h3>
+      <p><strong>Course:</strong> EDCI 7334</p>
+      <p><strong>Description:</strong> Personal reflection examining how the four historical CPP languages inform my understanding of curriculum as an engineer-turned-math-teacher.</p>
+            <a href="/artifacts/edci7334-week1-reflection.pdf?v=2" target="_blank">
+        <img src="/artifacts/preview-edci7334-week1-reflection.png?v=2" alt="Preview" class="artifact-thumb">
+      </a>
+
+      <div class="artifact-links" style="margin-bottom:0.3rem;">
+
+      <a class="btn" href="/artifacts/edci7334-week1-reflection.pdf?v=2" target="_blank">Open Reflection</a></div>
+</div>
+
+    </div><h3>References</h3>
+    <ul class="ref-list">
+      <li>Blazar, D., Heller, B., Kane, T. J., et al. (2019). <em>Learning by the book: Comparing math achievement growth by textbook in six Common Core states</em>. CALDER Working Paper.</li>
+      <li>Dewey, J. (1902). <em>The child and the curriculum</em>. University of Chicago Press.</li>
+    </ul>
+  </div>
+
+  <!-- STANDARD 2 — Instruction (EDCI 7334 + EDFR 6302) -->
+  <div id="s2" class="page">
+    <h1>Standard 2 — EDCI 7334 / EDFR 6302</h1>
+    <h2>Knowledge of Instruction</h2>
+    <div class="standard-objective">Program completers will demonstrate advanced ability to plan, implement, and evaluate instruction to facilitate student learning.</div>
+    <h3>Rationale</h3>
+    <p>My understanding of instruction was shaped by both EDCI 7334 (Curriculum Problems and Processes) and EDFR 6302 (Foundations of Learning, Cognition and Human Development). EDCI 7334 introduced me to the flipped classroom as an instructional model that shifts from teacher-centered delivery to active, student-centered learning. EDFR 6302 deepened my understanding of how students learn, examining cognitive, behavioral, and social learning theories that inform effective instructional design.</p>
+
+<div class="artifact-grid">
+<div class="artifact-box">
+      <h3>Design Challenge 1 Infographic</h3>
+      <p><strong>Course:</strong> EDCI 7334</p>
+      <p><strong>Description:</strong> Infographic explaining the flipped classroom model and its benefits for student-centered mathematics instruction.</p>
+            <a href="/artifacts/colorful-retro-infographic.pdf?v=2" target="_blank">
+        <img src="/artifacts/preview-colorful-retro-infographic.png?v=2" alt="Preview" class="artifact-thumb">
+      </a>
+
+      <div class="artifact-links" style="margin-bottom:0.3rem;">
+
+      <a class="btn" href="/artifacts/colorful-retro-infographic.pdf?v=2" target="_blank">Open Infographic</a></div>
+</div>
+    <div class="artifact-box">
+      <h3>Week 3 Reflection: Flipped Classrooms and UbD</h3>
+      <p><strong>Course:</strong> EDCI 7334</p>
+      <p><strong>Description:</strong> Reflection on flipped classrooms and Understanding by Design as instructional frameworks grounded in positivist-technical CPP.</p>
+            <a href="/artifacts/edci7334-week3-reflection.pdf?v=2" target="_blank">
+        <img src="/artifacts/preview-edci7334-week3-reflection.png?v=2" alt="Preview" class="artifact-thumb">
+      </a>
+
+      <div class="artifact-links" style="margin-bottom:0.3rem;">
+
+      <a class="btn" href="/artifacts/edci7334-week3-reflection.pdf?v=2" target="_blank">Open Reflection</a></div>
+</div>
+    <div class="artifact-box">
+      <h3>Week 4 Reflection: PBL and Place-Based Education</h3>
+      <p><strong>Course:</strong> EDCI 7334</p>
+      <p><strong>Description:</strong> Reflection on project-based and place-based education as interpretivist-experiential instructional approaches.</p>
+            <a href="/artifacts/edci7334-week4-reflection.pdf?v=2" target="_blank">
+        <img src="/artifacts/preview-edci7334-week4-reflection.png?v=2" alt="Preview" class="artifact-thumb">
+      </a>
+
+      <div class="artifact-links" style="margin-bottom:0.3rem;">
+
+      <a class="btn" href="/artifacts/edci7334-week4-reflection.pdf?v=2" target="_blank">Open Reflection</a></div>
+</div>
+
+    </div><h3>References</h3>
+    <ul class="ref-list">
+      <li>Bergmann, J., &amp; Sams, A. (2012). <em>Flip your classroom: Reach every student in every class every day</em>. ISTE.</li>
+      <li>Schunk, D. H. (2020). <em>Learning theories: An educational perspective</em> (8th ed.). Pearson.</li>
+    </ul>
+  </div>
+
+  <!-- STANDARD 3 — Pedagogy (EDCI 7353 Specialization) -->
+  <div id="s3" class="page">
+    <h1>Standard 3 — EDCI 7353</h1>
+    <h2>Pedagogical Content Knowledge</h2>
+    <div class="standard-objective">Students will demonstrate advanced depth and breadth of knowledge and skills in the academic discipline and pedagogy.</div>
+    <h3>Rationale</h3>
+    <p>EDCI 7353 (Teaching and Learning Algebraic Concepts) provided a deep exploration of pedagogical content knowledge in algebra education. The course examined algebraic thinking, its historical evolution, high-leverage teaching practices, and the design of instruction that promotes conceptual understanding. As the syllabus states, this course covers "best practices based on research related to the history and evolution of algebra and its relation to algebraic thinking, high-leverage classroom practices to promote conceptual understanding of algebra, and algebra as a connected subject to students, standards, and teaching & learning."</p>
+    <p>The artifacts below demonstrate my development of pedagogical content knowledge — the intersection of deep content understanding and effective instructional practice — across multiple assignments in this course.</p>
+
+    <div class="artifact-box">
+      <h3>Final Teaching Demonstration: Introduction to Functions</h3>
+      <p><strong>Course:</strong> EDCI 7353 — Teaching and Learning Algebraic Concepts (Module 7 Capstone)</p>
+      <p><strong>Description:</strong> Comprehensive 90-minute lesson implementing the 5E instructional model (Engage, Explore, Explain, Elaborate, Evaluate) to introduce 8th-grade students to functions through interactive Desmos activities, function machines, and real-time formative assessment. The lesson demonstrates strategic use of technology, explicit connection to prior assessment data to address misconceptions (slope formula, handling negatives, y-intercept notation), and scaffolded progression from concrete input-output exploration to formal function identification.</p>
+      <a href="/artifacts/lesson-plan-functions.pdf?v=2" target="_blank"><img src="/artifacts/preview-lesson-plan-functions.png?v=2" alt="Preview" class="artifact-thumb">
+      </a>
+<div class="artifact-links" style="margin-bottom:0.3rem;">
+<a class="btn" href="/artifacts/lesson-plan-functions.pdf?v=2" target="_blank">Lesson Plan</a>
+    </div>
+      <div style="max-width:640px; margin-top:1rem;">
+        <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden;">
+          <iframe src="https://utrgv-my.sharepoint.com/personal/abraham_romero01_utrgv_edu/_layouts/15/embed.aspx?UniqueId=552a4d6e-d1f0-45d9-8192-92eb39fc0e44&embed=%7B%22ust%22%3Atrue%7D&referrer=StreamWebApp&referrerScenario=EmbedDialog.Create" width="640" height="360" frameborder="0" scrolling="no" allowfullscreen title="Teaching Demo - Introduction to Functions" style="border:none; position:absolute; top:0; left:0; right:0; bottom:0; height:100%; max-width:100%;"></iframe>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="artifact-box">
+      <h3>Algebraic Thinking Task Implementation: The Staircase Problem</h3>
+      <p><strong>Course:</strong> EDCI 7353 — Teaching and Learning Algebraic Concepts (Module 6)</p>
+      <p><strong>Description:</strong> Analysis of algebraic thinking through a clinical interview task on the Staircase problem, administered to two adults. Using the Mathematics Understanding Rubric (procedural fluency, conceptual understanding, and problem-solving/strategic competency), the analysis evaluates each individual's approach to finding the number of cubes in an n-step staircase — from recursive addition to the explicit formula n(n+1)/2. The paper documents misconceptions (doubling confusion, area misapplication, factorial confusion), self-correction processes, geometric reasoning, and pedagogical implications for eliciting student thinking through targeted questioning.</p>
+      <a href="/artifacts/algebraic-thinking-task.pdf?v=2" target="_blank"><img src="/artifacts/preview-algebraic-thinking-task.png?v=2" alt="Preview" class="artifact-thumb">
+      </a>
+<div class="artifact-links" style="margin-bottom:0.3rem;">
+<a class="btn" href="/artifacts/algebraic-thinking-task.pdf?v=2" target="_blank">Open Paper</a>
+    </div>
+      <div style="max-width:640px; margin-top:1rem;">
+        <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden;">
+          <iframe src="https://utrgv-my.sharepoint.com/personal/abraham_romero01_utrgv_edu/_layouts/15/embed.aspx?UniqueId=4d2bad56-343c-4382-8506-dae0bcc660ce&embed=%7B%22ust%22%3Atrue%2C%22hv%22%3A%22CopyEmbedCode%22%7D&referrer=StreamWebApp&referrerScenario=EmbedDialog.Create" width="640" height="360" frameborder="0" scrolling="no" allowfullscreen title="Algebraic Thinking Task Presentation - The Staircases Problem" style="border:none; position:absolute; top:0; left:0; right:0; bottom:0; height:100%; max-width:100%;"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <h3>References</h3>
+    <ul class="ref-list">
+      <li>National Council of Teachers of Mathematics. (2000). <em>Principles and standards for school mathematics</em>. NCTM.</li>
+      <li>National Council of Teachers of Mathematics. (2014). <em>Principles to actions: Ensuring mathematical success for all</em>. NCTM.</li>
+    </ul>
+  </div>
+
+  <!-- STANDARD 4 — Students (EDFR 6302) -->
+  <div id="s4" class="page">
+    <h1>Standard 4 — EDFR 6302</h1>
+    <h2>Knowledge of Students</h2>
+    <div class="standard-objective">Program completers will demonstrate advanced knowledge of the student as influenced by cognitive, physical, emotional, social, cultural, environmental, and economic factors.</div>
+    <h3>Rationale</h3>
+    <p>EDFR 6302 (Foundations of Learning, Cognition and Human Development) provided a comprehensive framework for understanding the multiple factors that influence students' ability to learn. The course examined cognitive development, social learning theory, motivation, and the role of self-regulation in academic achievement. I learned that students bring unique cognitive profiles, cultural backgrounds, social experiences, and emotional needs to the classroom, and that effective teaching requires attending to all of these dimensions.</p>
+    <p>For my course project, I created a video presentation on <strong>Walter Mischel's theory of delayed gratification</strong> — commonly known as the marshmallow test. This theory examines how self-regulation, willpower, and the ability to delay gratification influence cognitive development and academic outcomes. Understanding that students' capacity for self-control is not fixed but can be developed through strategies and environmental supports has fundamentally shaped how I design classroom routines, provide feedback, and build student agency in my mathematics classroom.</p>
+    <p>These artifacts demonstrate my ability to connect major learning theories to concrete instructional practice — recognizing that factors like self-regulation, motivation, cultural background, and systemic inequality directly impact students' ability to learn.</p>
+
+    <h3>References</h3>
+    <ul class="ref-list">
+      <li>Mischel, W. (2014). <em>The marshmallow test: Mastering self-control</em>. Little, Brown and Company.</li>
+      <li>Bandura, A. (1986). <em>Social foundations of thought and action: A social cognitive theory</em>. Prentice-Hall.</li>
+      <li>Schunk, D. H. (2020). <em>Learning theories: An educational perspective</em> (8th ed.). Pearson.</li>
+    </ul>
+
+    <div class="artifact-box">
+      <h3>Course Project: Mischel's Theory of Delayed Gratification</h3>
+      <p><strong>Course:</strong> EDFR 6302 — Foundations of Learning, Cognition and Human Development</p>
+      <p><strong>Description:</strong> Video presentation on Mischel's marshmallow test and delayed gratification theory, exploring how self-regulation and willpower affect student learning and development.</p>
+      <iframe width="100%" height="400" src="https://www.youtube.com/embed/dExYU8MA1L4" frameborder="0" allowfullscreen style="border-radius:6px; margin-top:1rem;"></iframe>
+    </div>
+
+  </div>
+
+  <!-- STANDARD 5 — Research (EDFR 6300 only) -->
+  <div id="s5" class="page">
+    <h1>Standard 5 — EDFR 6300</h1>
+    <h2>Inquiry and Research</h2>
+    <div class="standard-objective">Program completers will demonstrate ability to use research to promote student learning and to contribute to the teaching profession.</div>
+    <h3>Rationale</h3>
+    <p>EDFR 6300 (Research Methods in Education) equipped me with the foundational skills to engage with educational research as both a critical consumer and a producer. The course culminated in a complete research proposal that I developed across multiple cumulative assignments — from formulating research questions and conducting a literature review to designing a methodology, analyzing anticipated data, and drawing conclusions with implications for practice.</p>
+    <p>My research project, <em>"Designing Artificial Intelligence to Support Rigorous Mathematics Learning for Students from Underprivileged Communities,"</em> examines how AI-driven learning systems can be designed to assess prior knowledge and scaffold rigorous mathematics instruction for students from low-income communities, and to what extent current AI tools reproduce existing opportunity gaps. Grounded in sociocultural theory and critical pedagogy, the study adopts a qualitative case study design in a Title I school, using semi-structured interviews, classroom observations, and document analysis to investigate these questions. The paper demonstrates my ability to synthesize a 10-source literature review, apply theoretical frameworks, design ethical research procedures, and articulate meaningful implications for mathematics education.</p>
+
+    <div class="artifact-box">
+      <h3>Final Research Paper: Generative AI for Equitable Mathematics Learning</h3>
+      <p><strong>Course:</strong> EDFR 6300 — Research Methods in Education</p>
+      <p><strong>Description:</strong> Complete qualitative research proposal examining how generative AI can be designed to support rigorous mathematics learning for students from underprivileged communities. Grounded in sociocultural theory and critical pedagogy, the study proposes a qualitative case study design in a Title I school with data collected through semi-structured interviews, classroom observations, and document analysis using thematic analysis. The paper includes a 10-source peer-reviewed literature review, theoretical framework, research methodology, anticipated findings, and implications for equity-centered AI design in mathematics education.</p>
+      <a href="/artifacts/Final_Research_Paper_Romero.pdf?v=2" target="_blank"><img src="/artifacts/preview-Final_Research_Paper_Romero.png?v=2" alt="Preview" class="artifact-thumb">
+      </a>
+<div class="artifact-links" style="margin-bottom:0.3rem;">
+<a class="btn" href="/artifacts/Final_Research_Paper_Romero.pdf?v=2" target="_blank">Open Paper</a>
+    </div>
+    </div>
+
+    <div class="artifact-box">
+      <h3>Literature Review: AI in Mathematics Education</h3>
+      <p><strong>Course:</strong> EDFR 6300 — Research Methods in Education</p>
+      <p><strong>Description:</strong> Comprehensive literature review of 10 peer-reviewed journal articles examining generative artificial intelligence in mathematics education, including AI for problem-solving, tutoring, task adaptation, equity implications, and preservice teacher training. Articles synthesized from journals including <em>School Science and Mathematics</em>, <em>Computers &amp; Education</em>, and the <em>Journal of Intelligence</em>.</p>
+      <a href="/artifacts/edfr6300-literature-review.pdf?v=2" target="_blank"><img src="/artifacts/preview-edfr6300-literature-review.png?v=2" alt="Preview" class="artifact-thumb">
+      </a>
+<div class="artifact-links" style="margin-bottom:0.3rem;">
+<a class="btn" href="/artifacts/edfr6300-literature-review.pdf?v=2" target="_blank">Open Lit Review</a>
+    </div>
+    </div>
+    <h3>References</h3>
+    <ul class="ref-list">
+      <li>Creswell, J. W., &amp; Creswell, J. D. (2018). <em>Research design: Qualitative, quantitative, and mixed methods approaches</em> (5th ed.). SAGE.</li>
+    </ul>
+  </div>
+
+  <!-- STANDARD 6 — Assessment (EDCI 6304) -->
+  <div id="s6" class="page">
+    <h1>Standard 6 — EDCI 6304</h1>
+    <h2>Knowledge of Assessment</h2>
+    <div class="standard-objective">Program completers will demonstrate advanced knowledge of assessment and the ability to use multiple sources of assessment for maximizing student learning.</div>
+
+    <h3>Rationale</h3>
+    <p>EDCI 6304 (Assessment of Learning) provided a comprehensive framework for understanding assessment as an integrated system serving three purposes: assessment <em>for</em> learning (formative), assessment <em>as</em> learning (metacognitive), and assessment <em>of</em> learning (summative). The course emphasized that effective assessment is not a single event but a complete six-stage cycle in which each component informs the others and collectively drives instructional decisions.</p>
+
+    <p>The artifacts below document the complete assessment cycle I designed for an 8th-grade mathematics unit on calculating the volume of cylinders, aligned to Category 3 of the 8th-grade mathematics Texas Essential Knowledge and Skills (TEKS).</p>
+
+    <div class="artifact-box" style="width:100%;">
+      <h3>Stage 1: Setting Objectives for Learning</h3>
+      <p>This artifact highlights the design and implementation of an assessment cycle that begins with the establishment of objectives for all three types:</p>
+      <ul>
+        <li><strong>Assessment for Learning</strong> (formative): The learner will calculate volume of cylinders using the volume formula based on given dimensions throughout Module 5 Topic 4 Lesson 1.</li>
+        <li><strong>Assessment as Learning</strong> (metacognitive): The learner will explain the process that the volume formula uses to calculate the capacity of a cylinder by describing the relationship between radius, height, and volume on an Exit Ticket.</li>
+        <li><strong>Assessment of Learning</strong> (summative): The learner will analyze the volume of rainfall during a major hurricane and design a rainfall harvesting system based on their analysis.</li>
+      </ul>
+        </div>
+
+    <div class="artifact-box" style="width:100%;">
+      <h3>Stage 2: Planning Summative Assessment — Rainwater Harvesting PBL</h3>
+      <p>This artifact documents the design and implementation of a Project-Based Learning (PBL) authentic assessment focused on designing a rainwater harvesting system. Key features include:</p>
+      <ul>
+        <li>Students calculate potential rainwater volume based on storm data, catchment area, and surface material.</li>
+        <li><strong>Emphasis on precise volume calculations:</strong> Students meticulously calculate the volume of cylindrical storage tanks (sourced from National Storage Tank) using the formula for the volume of a cylinder.</li>
+        <li>Direct comparison of calculated rainwater volume and tank capacity ensures appropriate tank selection.</li>
+        <li>Students design a non-scaled model of their system.</li>
+        <li>A final report details calculations, design choices, and model components.</li>
+        <li>Assessment rubric focuses on accuracy of calculations, correct formula application, and conceptual understanding.</li>
+      </ul>
+      <p><em>Note: This assessment serves as both the revised assessment and the implemented assessment.</em></p>
+      <a href="/artifacts/edci6304-pbl-assessment.pdf?v=2" target="_blank"><img src="/artifacts/preview-edci6304-pbl-assessment.png?v=2" alt="Preview" class="artifact-thumb">
+      </a>
+<div class="artifact-links" style="margin-bottom:0.3rem;">
+<a class="btn" href="/artifacts/edci6304-pbl-assessment.pdf?v=2" target="_blank">Open Artifact</a>
+        </div>
+    </div>
+
+    <div class="artifact-box" style="width:100%;">
+      <h3>Stage 3: Plan &amp; Implementation Instruction</h3>
+      <p>This artifact presents a detailed account of the planning and implementation phase (Step 3) of the assessment cycle. It includes a comprehensive suite of resources:</p>
+      <ul>
+        <li>A table aligning objectives with assessments</li>
+        <li>An exit ticket for student feedback</li>
+        <li>Supporting reference materials for students</li>
+        <li>A rubric for evaluating understanding, accuracy, and problem-solving skills</li>
+        <li>An assessment-as-learning component</li>
+        <li>A self-reflection checklist for students, covering key skills such as: identifying shapes, selecting formulas, and calculating and verifying volume</li>
+      </ul>
+      <a href="/artifacts/Wk_4_Assignment.pdf?v=2" target="_blank"><img src="/artifacts/preview-Wk_4_Assignment.png?v=2" alt="Preview" class="artifact-thumb">
+      </a>
+<div class="artifact-links" style="margin-bottom:0.3rem;">
+<a class="btn" href="/artifacts/Wk_4_Assignment.pdf?v=2" target="_blank">Open Artifact</a>
+        </div>
+    </div>
+
+    <div class="artifact-box" style="width:100%;">
+      <h3>Stages 4 &amp; 5: Assessment Data Collection &amp; Analysis</h3>
+      <p>The following artifacts show the implementation of stages 4 &amp; 5 of the assessment cycle, starting with Assessment for Learning, which utilized an exit ticket featuring a cylinder with a hemisphere on top — a task designed to ensure rigor in assessing student understanding.</p>
+
+      <h4 style="margin-top:1rem;">1. Assessment for Learning</h4>
+      <p>This assessment involved students solving a volume problem related to the composite shape. Data collection was conducted through simulated responses based on 10 composed student profiles, capturing hypothetical performances. The analysis revealed trends in student understanding and highlighted areas where additional support and practical examples were necessary.</p>
+      <p>
+        <a class="btn-sm" href="/artifacts/Raw_Formative_Assessment_for_Learning_Exit_Ticket.pdf?v=2" target="_blank">Raw Exit Ticket</a></p>
+
+      <h4>2. Assessment as Learning</h4>
+      <p>In this stage, students employed a checklist to evaluate their confidence in various skills related to the lesson. This reflective process enabled them to assess their own learning and identify areas for improvement. Data was gathered from the same 10 simulated profiles, illustrating students' self-reported confidence levels and their desire for more feedback. The analysis suggested the need for regular check-ins to support their metacognitive development.</p>
+      <p>
+        <a class="btn-sm" href="/artifacts/Raw_Text-Based_Data_for_Assessment_as_Learning.pdf?v=2" target="_blank">Raw Text-Based Data</a></p>
+
+      <h4>3. Assessment of Learning</h4>
+      <p>The final phase involved a project-based learning assessment where students applied their knowledge to real-world situations. Data was collected from the 10 simulated profiles, utilizing a grading rubric to evaluate performance. The analysis of this data highlighted strengths and weaknesses, providing insights into overall student comprehension and informing future instructional decisions.</p>
+      <p><a class="btn-sm" href="/artifacts/Summative_Rubric.pdf?v=2" target="_blank">Raw Data (PDF)</a></p>
+
+    </div>
+    <div class="artifact-box" style="width:100%;">
+      <h3>Stage 6: Making Instructional Decisions</h3>
+      <p><strong>Implementing Change in Current Lesson or Unit</strong></p>
+      <p>In this subsection, write 1–2 paragraphs explaining how these assessments changed your teaching approach within the same lesson or unit. Discuss both minor and major adjustments you made, explaining your reasoning behind each change. Include specific evidence from student performance during the assessments that indicated the need for these modifications.</p>
+      <p><strong>Reflective Practitioner Change</strong></p>
+      <p>In this subsection, write 1–2 paragraphs describing how this experience has transformed your approach as a reflective practitioner and influenced your future teaching methods. Provide specific examples from your experience to support any planned changes, regardless of their scale.</p>
+    </div>
+
+    <h3>Rationale for Assessment Artifact</h3>
+    <p>This artifact demonstrates a comprehensive understanding of both formative and summative assessment in the mathematics and science classroom. Through the implementation of varied assessment strategies — specifically, an exit ticket for Assessment for Learning, a confidence checklist for Assessment as Learning, and a project-based assessment for Assessment of Learning — this document illustrates the complete assessment cycle.</p>
+    <p>The assessments included in this artifact are simulated, with the objective to cover these concepts later in the academic year. This approach contrasts significantly with my previous practices, where I relied heavily on dry worksheets focused on solving for the unknown. Such methods often resulted in minimal engagement and understanding among students. In contrast, the assessments designed here promote a much richer and thorough understanding of mathematical concepts and their applications.</p>
+    <p>The structured assessments not only gauge student performance but also foster metacognitive reflection and confidence in their skills, which are crucial in learning environments. By compiling these assessments into one document, the artifact showcases the entire assessment cycle — from data collection to analysis — demonstrating the ability to effectively leverage assessment for enhanced learning outcomes.</p>
+    <p style="font-style:italic; color:var(--gray);">"This experience has reinforced the value of dynamic and interactive assessment practices in my teaching setting, moving away from traditional methods to more engaging and meaningful assessments that truly reflect student understanding."</p>
+
+    <h3>References</h3>
+    <ul class="ref-list">
+      <li>Black, P., &amp; Wiliam, D. (1998). Assessment and classroom learning. <em>Assessment in Education: Principles, Policy &amp; Practice</em>, 5(1), 7–74.</li>
+      <li>Popham, W. J. (2020). <em>Classroom assessment: What teachers need to know</em> (9th ed.). Pearson.</li>
+    </ul>
+  </div>
+
+  <!-- STANDARD 7 — Professional Practice (EDFR 6388 or any course) -->
+  <div id="s7" class="page">
+    <h1>Standard 7 — EDFR 6388</h1>
+    <h2>Professional Practice</h2>
+    <div class="standard-objective">Program completers will demonstrate high standards for professional practice.</div>
+    <h3>Rationale</h3>
+    <p>EDFR 6388 (Historical and Sociocultural Foundations of Education) provided the historical and philosophical context for understanding the teaching profession and the broader purposes of education in a democratic society. In this course, I co-authored a paper analyzing Paulo Freire's banking model of education — examining how education can either liberate or oppress students, and what this means for professional practice as an educator.</p>
+    <p>Two video artifacts extend this historical analysis. "Educational Reforms Through A Teacher's Eyes" traces the arc of U.S. education reform from A Nation at Risk through Goals 2000, No Child Left Behind, and ESSA, drawing on Diane Ravitch's critique of testing culture and Finland's alternative model. "Lessons Forgotten" examines Gary Orfield's 2007 warnings about school segregation — now validated by 2024 research — illustrating the phenomenon of triple segregation and what happens when the profession fails to act on its own evidence. Together, these videos ground my professional practice in an understanding that teaching is a historically situated act, and that meaningful practice requires engaging with the policy contexts and equity challenges that shape students' lives.</p>
+    <p>Beyond the coursework, my professional practice has been characterized by sustained leadership and service as PLC Lead and Department Head, Carnegie Learning curriculum reviewer for TEA, and partner with Instruction Partners.</p>
+
+    <div class="artifact-box">
+      <h3>Critical Analysis: Paulo Freire's Banking Model of Education</h3>
+      <p><strong>Course:</strong> EDFR 6388 — Historical and Sociocultural Foundations of Education</p>
+      <p><strong>Description:</strong> Co-authored analytical paper examining Paulo Freire's banking model of education and its relevance to contemporary educational practice. The paper explores how education can either liberate or oppress students, drawing connections between Freire's critical pedagogy and the professional responsibilities of educators working with historically underserved communities.</p>
+      <a href="/artifacts/edfr6388-banking-paper.pdf?v=2" target="_blank"><img src="/artifacts/preview-edfr6388-banking-paper.png?v=2" alt="Preview" class="artifact-thumb">
+      </a>
+<div class="artifact-links" style="margin-bottom:0.3rem;">
+<a class="btn" href="/artifacts/edfr6388-banking-paper.pdf?v=2" target="_blank">Open Paper</a>
+    </div>
+    </div>
+
+    <div class="artifact-box">
+      <h3>Educational Reforms Through A Teacher's Eyes</h3>
+      <p><strong>Course:</strong> EDFR 6388 — Historical and Sociocultural Foundations of Education</p>
+      <p><strong>Description:</strong> Video tracing the arc of U.S. education reform from A Nation at Risk through Goals 2000, No Child Left Behind, and ESSA, drawing on Diane Ravitch's critique of testing culture and Finland's alternative model.</p>
+      <p><em>Video embed needed — paste your SharePoint link and I'll add it!</em></p>
+    </div>
+
+    <div class="artifact-box">
+      <h3>Lessons Forgotten: School Segregation</h3>
+      <p><strong>Course:</strong> EDFR 6388</p>
+      <p><strong>Description:</strong> Video examining Gary Orfield's 2007 warnings about school segregation — now validated by 2024 research — illustrating triple segregation and what happens when the profession fails to act on its own evidence.</p>
+      <p><em>Video embed needed — paste your SharePoint link and I'll add it!</em></p>
+    </div>
+
+    <h3>References</h3>
+    <ul class="ref-list">
+      <li>Freire, P. (1970). <em>Pedagogy of the oppressed</em>. Continuum.</li>
+      <li>Tyack, D., &amp; Cuban, L. (1995). <em>Tinkering toward utopia: A century of public school reform</em>. Harvard University Press.</li>
+    </ul>
+  </div>
+
+  <!-- STANDARD 8 — Technology (Any course) -->
+  <div id="s8" class="page">
+    <h1>Standard 8 — Any course</h1>
+    <h2>Integrating Technology with Instruction</h2>
+    <div class="standard-objective">Program completers will demonstrate ability to integrate current technology into instruction and communications/collaboration activities where appropriate.</div>
+    <h3>Rationale</h3>
+
+    <p>EDCI 6348 provided the opportunity to develop a concept paper proposing the <strong>Matrix Classroom</strong> — an AI-powered executable lesson platform that represents the most significant technology integration project of my graduate career. The platform uses artificial intelligence not as a student-facing tutor but as a <strong>teacher-facing amplifier</strong>: a system that automates the repetitive, timing-sensitive aspects of lesson delivery while giving the teacher real-time situational awareness of every student's understanding. Below I address the four dimensions of this standard using the Matrix Classroom as the primary artifact, supplemented by a second technology example from a previous course.</p>
+
+    <p><strong>Types of technology used:</strong> The Matrix Classroom integrates multiple technology layers: the <strong>Matrix protocol</strong> (self-hosted Synapse homeserver with E2EE) as the encrypted communication and delivery medium; <strong>generative AI orchestration</strong> (Hermes classroom-bot profile) as the lesson facilitator running the campus 5-step instructional cycle; <strong>Honcho vector memory</strong> (pgvector + Redis) for per-student longitudinal tracking across 51 lessons; <strong>computer vision</strong> (snap-photo math input) for eliminating the typing barrier in middle school mathematics; and <strong>Cloudflare Tunnel</strong> for secure public access behind a self-hosted firewall.</p>
+
+    <p><strong>Developing conceptual understanding and instruction:</strong> The platform operationalizes the Bluebonnet Learning (TEA OER) pedagogical model as a <strong>state-machine curriculum</strong> — each lesson is a runnable program with typed slots for Bell Ringer, Hook, Direct Instruction blocks, 3A Talk discourse prompts, Practice problems, and Exit Tickets. The AI bot posts timed prompts, collects student responses, and routes them to Honcho memory, enabling real-time misconception detection and forgetting-curve spiral review. This is not a common presentation tool; it is an entirely new instructional delivery medium that transforms how curriculum is executed in the classroom.</p>
+
+    <p><strong>Communication and collaboration:</strong> Matrix encrypted chat rooms serve as the communication medium for all instructional discourse. Students engage in structured 3A Talk using sentence stems, collaborate in team rooms during Learning Together phases, and receive personalized warm-up problems via DM at check-in. A <strong>Teacher Radar</strong> system provides the teacher a private DM channel with real-time alerts about stuck teams, misconception clusters, and silent students — converting the noise of 21 typing students into actionable instructional intelligence.</p>
+
+    <p><strong>Fostering collaboration:</strong> The platform enables dynamic breakout grouping — students are auto-grouped into reteach and extension sub-rooms based on real-time Honcho assessment data. The Lesson Playback Studio captures every class session as a replayable artifact with misconception heatmaps, enabling absent-student replay and auto-generated small-group plans for the next day. This technology infrastructure is already deployed and running on self-hosted infrastructure, demonstrating the ability to integrate current technology into instruction in a pedagogically meaningful way.</p>
+
+    <div class="artifact-box">
+      <h3>NSF Concept Paper: Curriculum as Code — AI-Powered Executable Lesson Platform</h3>
+      <p><strong>Course:</strong> EDCI 6348 (Working Draft — in progress)</p>
+      <p><strong>Description:</strong> Concept paper (in development) proposing the Matrix Classroom as a teacher-facing AI amplifier for equitable STEM learning. The paper describes the full technology architecture: Matrix protocol for encrypted delivery, generative AI orchestration for the 5-step instructional cycle, Honcho vector memory for per-student tracking, and computer vision for math input. Written as a proposal for the NSF STEM K-12 program (NSF 25-545), this working draft demonstrates the ability to integrate current technologies (AI, chat protocols, vector databases, computer vision) into a cohesive instructional system that serves underprivileged students in the Rio Grande Valley.</p>
+      <a href="/artifacts/matrix-classroom-concept-paper.pdf?v=2" target="_blank"><img src="/artifacts/preview-matrix-classroom-concept-paper.png?v=2" alt="Preview" class="artifact-thumb">
+      </a>
+<div class="artifact-links" style="margin-bottom:0.3rem;">
+<a class="btn" href="/artifacts/matrix-classroom-concept-paper.pdf?v=2" target="_blank">Open Concept Paper</a>
+        </div>
+    </div>
+
+    <div class="artifact-box">
+      <h3>Virtual Balance Scale Manipulative for Solving Equations</h3>
+      <p><strong>Course:</strong> EDCI 7353 — Teaching and Learning Algebraic Concepts (Module 4)</p>
+      <p><strong>Description:</strong> Demonstration of a virtual balance scale manipulative using Polypad by Amplify to solve algebraic equations. The video shows how a hands-on visual model — where each side of the scale must remain balanced — helps students conceptualize the properties of equality and the process of solving for unknown variables. This assignment required finding and implementing a manipulative that fosters algebraic thinking in middle school, representing a deliberate integration of digital technology (virtual manipulative) rather than physical manipulatives.</p>
+      <div style="max-width:640px; margin-top:1rem;">
+        <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden;">
+          <iframe src="https://utrgv-my.sharepoint.com/personal/abraham_romero01_utrgv_edu/_layouts/15/embed.aspx?UniqueId=d0b6f430-e8c1-45e6-a51f-f4d6c771562a&embed=%7B%22ust%22%3Atrue%2C%22hv%22%3A%22CopyEmbedCode%22%7D&referrer=StreamWebApp&referrerScenario=EmbedDialog.Create" width="640" height="360" frameborder="0" scrolling="no" allowfullscreen title="Using a balance scale as a manipulative" style="border:none; position:absolute; top:0; left:0; right:0; bottom:0; height:100%; max-width:100%;"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <h3>References</h3>
+    <ul class="ref-list">
+      <li>International Society for Technology in Education. (2016). <em>ISTE standards for educators</em>. ISTE.</li>
+      <li>National Council of Teachers of Mathematics. (2014). <em>Principles to actions: Ensuring mathematical success for all</em>. NCTM.</li>
+    </ul>
+  </div>
+
+</div>
+
+<script>
+  // Sidebar navigation
+  document.querySelectorAll('.sidebar nav a').forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const page = this.dataset.page;
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.sidebar nav a').forEach(a => a.classList.remove('active'));
+      document.getElementById(page).classList.add('active');
+      this.classList.add('active');
+      window.scrollTo(0, 0);
+      // Close mobile menu on nav click
+      document.querySelector('.sidebar').classList.remove('open');
+      document.getElementById('menu-overlay').classList.remove('open');
+    });
+  });
+  // Hamburger menu toggle
+  document.getElementById('menu-btn').addEventListener('click', function() {
+    document.querySelector('.sidebar').classList.toggle('open');
+    document.getElementById('menu-overlay').classList.toggle('open');
+  });
+  document.getElementById('menu-overlay').addEventListener('click', function() {
+    document.querySelector('.sidebar').classList.remove('open');
+    this.classList.remove('open');
+  });
+</script>
+
+</body>
+</html>
