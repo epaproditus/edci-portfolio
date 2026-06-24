@@ -1,0 +1,11 @@
+name = "portfolio-failover"
+main = "src/index.js"
+compatibility_date = "2025-06-24"
+
+# Deploy to portfolio.mr-romero.com
+routes = [
+  { pattern = "portfolio.mr-romero.com/*", zone_name = "mr-romero.com" }
+]
+
+[observability]
+enabled = true
