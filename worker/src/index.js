@@ -2,35 +2,28 @@
  * Portfolio failover worker for portfolio.mr-romero.com
  *
  * Strategy:
- * 1. Try origin first (cloudflared tunnel to home server)
- * 2. On success: pass through response, populate cache
- * 3. On failure: serve from cache -> serve static fallback
+ * 1. Worker intercepts all requests
+ * 2. Subrequests to origin with X-CF-Bypass header to avoid looping
+ * 3. On origin success: pass through, populate cache
+ * 4. On origin failure: serve from cache -> static fallback
  */
-
-// Origin: cloudflared tunnel internal endpoint (reachable from Cloudflare Workers)
-// The tunnel routes based on the Host header, so we set it to portfolio.mr-romero.com
-// which the tunnel already has configured -> localhost:9009
-const ORIGIN = 'https://1d2c0fc1-0f47-4e4f-89dd-a35dfc7c9367.cfargotunnel.com';
 
 // Cache TTL: 1 hour for HTML, 24 hours for assets
 function cacheTtl(url) {
   const pathname = new URL(url).pathname;
   if (pathname.endsWith('.html') || pathname === '/' || !pathname.includes('.')) {
-    return 3600; // 1 hour
+    return 3600;
   }
-  return 86400; // 24 hours for static assets
+  return 86400;
 }
 
 async function serveFromCache(request, cache) {
   const cached = await cache.match(request);
-  if (cached) {
-    return cached;
-  }
+  if (cached) return cached;
   return null;
 }
 
-async function serveFallback(env) {
-  // Return a clean static page when origin is unreachable
+async function serveFallback() {
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -71,34 +64,39 @@ async function serveFallback(env) {
 
 export default {
   async fetch(request, env, ctx) {
+    // Bypass header: if present, this is a subrequest from the worker itself.
+    // Pass through to origin without any processing.
+    if (request.headers.get('X-CF-Bypass') === '1') {
+      // Remove the bypass header before forwarding to origin
+      const cleanHeaders = new Headers(request.headers);
+      cleanHeaders.delete('X-CF-Bypass');
+      const cleanRequest = new Request(request, { headers: cleanHeaders });
+      // fetch() with the same URL goes to origin since the bypass header
+      // prevents re-entering this worker
+      return fetch(cleanRequest);
+    }
+
     const url = new URL(request.url);
     const cache = caches.default;
 
-    // Try origin
+    // Try origin via subrequest with bypass header
     try {
-      const originUrl = ORIGIN + url.pathname + url.search;
-      // Pass portfolio.mr-romero.com as Host so the tunnel routes to localhost:9009
       const originHeaders = new Headers(request.headers);
-      originHeaders.set('Host', 'portfolio.mr-romero.com');
-      const originRequest = new Request(originUrl, {
+      originHeaders.set('X-CF-Bypass', '1');
+      const originRequest = new Request(request.url, {
         method: request.method,
         headers: originHeaders,
         body: request.body,
         redirect: 'follow',
       });
 
-      const originResponse = await fetch(originRequest, {
-        cf: { cacheEverything: false },
-      });
+      const originResponse = await fetch(originRequest);
 
       if (originResponse.ok || originResponse.status < 500) {
         // Clone and populate cache in background
-        const clone = originResponse.clone();
-        ctx.waitUntil(
-          cache.put(request, clone)
-        );
+        const cloned = originResponse.clone();
+        ctx.waitUntil(cache.put(request, cloned));
 
-        // Add header so we know it came from origin
         const headers = new Headers(originResponse.headers);
         headers.set('X-Served-By', 'origin');
         return new Response(originResponse.body, {
@@ -107,7 +105,7 @@ export default {
         });
       }
 
-      // Origin returned 5xx — try cache
+      // Origin 5xx — try cache
       const cached = await serveFromCache(request, cache);
       if (cached) {
         const headers = new Headers(cached.headers);
@@ -115,7 +113,7 @@ export default {
         return new Response(cached.body, { status: cached.status, headers });
       }
 
-      return serveFallback(env);
+      return serveFallback();
     } catch (e) {
       // Origin unreachable — try cache
       const cached = await serveFromCache(request, cache);
@@ -125,7 +123,7 @@ export default {
         return new Response(cached.body, { status: cached.status, headers });
       }
 
-      return serveFallback(env);
+      return serveFallback();
     }
   },
 };
