@@ -7,11 +7,10 @@
  * 3. On failure: serve from cache -> serve static fallback
  */
 
-// Origin is the cloudflared tunnel ingress — the worker reaches it
-// via the tunnel's internal hostname. We use a separate DNS record
-// (origin-portfolio.mr-romero.com) that points to the same tunnel
-// so the worker can call it without looping.
-const ORIGIN = 'https://origin-portfolio.mr-romero.com';
+// Origin: cloudflared tunnel internal endpoint (reachable from Cloudflare Workers)
+// The tunnel routes based on the Host header, so we set it to portfolio.mr-romero.com
+// which the tunnel already has configured -> localhost:9009
+const ORIGIN = 'https://1d2c0fc1-0f47-4e4f-89dd-a35dfc7c9367.cfargotunnel.com';
 
 // Cache TTL: 1 hour for HTML, 24 hours for assets
 function cacheTtl(url) {
@@ -78,9 +77,12 @@ export default {
     // Try origin
     try {
       const originUrl = ORIGIN + url.pathname + url.search;
+      // Pass portfolio.mr-romero.com as Host so the tunnel routes to localhost:9009
+      const originHeaders = new Headers(request.headers);
+      originHeaders.set('Host', 'portfolio.mr-romero.com');
       const originRequest = new Request(originUrl, {
         method: request.method,
-        headers: request.headers,
+        headers: originHeaders,
         body: request.body,
         redirect: 'follow',
       });
